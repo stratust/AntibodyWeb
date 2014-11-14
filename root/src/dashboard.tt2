@@ -1,0 +1,272 @@
+﻿            <div class="inner" style="min-height: 700px;">
+                <div class="row">
+                    <div class="col-lg-12">
+                        <h1> Dashboard </h1>
+                    </div>
+                </div>
+                  <hr />
+                 <!--BLOCK SECTION -->
+                 <div class="row">
+                    <div class="col-lg-12">
+                        <div style="text-align: center;">
+                            <a class="quick-btn" href="#" data-html="true" data-placement="bottom" data-trigger="hover" data-toggle="popover" 
+								title="Organisms in database" 
+								data-content="
+								<ol>
+									[% rs = c.model('AntibodyDB::Organism').search_rs() %]
+									[% WHILE ( org = rs.next) %]
+									<li>[% org.organism_name %] (<i>[% org.organism_species %]</i>)</li>
+									[% END %]
+								</ol>">
+                                <i class="icon-info icon-2x"></i>
+                                <span> Organisms</span>
+                                <span class="label label-danger">[%	c.model('AntibodyDB::Organism').count |	format_number %]</span>
+                            </a>
+
+                            <a class="quick-btn"  href="#" data-html="true" data-placement="bottom" data-trigger="hover" data-toggle="popover" 
+								title="Studies in database" 
+								data-content="
+								<ol>
+									[% rs = c.model('AntibodyDB::Study').search_rs() %]
+									[% WHILE ( row = rs.next) %]
+									<li>[% row.study_description %] </li>
+									[% END %]
+								</ol>">
+                                <i class="icon-briefcase icon-2x"></i>
+                                <span>Studies</span>
+                                <span class="label label-success">[%	c.model('AntibodyDB::Study').count |	format_number %]</span>
+                            </a>
+                             <a class="quick-btn" href="#" data-html="true" data-placement="bottom" data-trigger="hover" data-toggle="popover" 
+								title="Assays in database" 
+								data-content="
+								<ol>
+									[% rs = c.model('AntibodyDB::Assay').search_rs() %]
+									[% WHILE ( row = rs.next) %]
+									<li>[% row.assay_name %] </li>
+									[% END %]
+								</ol>">
+                                <i class="icon-bolt icon-2x"></i>
+                                <span>Assays</span>
+                                <span class="label label-warning">[%	c.model('AntibodyDB::Assay').count |	format_number %]</span>
+                            </a>
+                            <a class="quick-btn" href="#">
+                                <i class="icon-signal icon-2x"></i>
+                                <span>Igblasts</span>
+                                <span class="label btn-metis-4">[%	c.model('AntibodyDB::IgblastParam').count |	format_number %]</span>
+                            </a>
+ 
+                            <a class="quick-btn" href="#">
+                                <i class="icon-external-link icon-2x"></i>
+                                <span>Sequences</span>
+                                <span class="label btn-metis-2"> [%	c.model('AntibodyDB::Sequence').count |	format_number %]</span>
+                            </a>
+                            <a class="quick-btn" href="#">
+                                <i class="icon-lemon icon-2x"></i>
+                                <span>Annotations</span>
+                                <span class="label btn-metis-4">[%	c.model('AntibodyDB::PutativeAnnotation').count |	format_number %]</span>
+                            </a>
+                        </div>
+                    </div>
+                 </div>
+                 <!-- END BLOCK SECTION -->
+
+               <!-- BEGIN GENERAL FORM -->
+               <form method="post" action="[% c.uri_for('/clustering') %]" >
+                 <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1">
+						<div id="general_panel" class="panel panel-primary">
+							<div class="panel-heading">General Parameters</div>
+							<div class="panel-body" style="text-align:center">
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Study:</label>
+                                    <div class="col-sm-10">
+	    							    <select name="study" class="study form-control">
+		    							    <option value="">Please select an option</option>
+    		    							[% FOREACH row IN studies %]
+	    		    						<option value="[% row.study_id %]">[% row.study_description %]</option>
+		    		    					[% END%]
+			    		    			</select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Assay:</label>
+                                    <div class="col-sm-10">
+								        <select name="assay" class="assay form-control">
+									        <option value="">Please select an option</option>
+        								</select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label">Clustering:</label>
+                                    <div class="col-sm-10">
+								        <select name="clustering" id="cluster" class="clustering form-control">
+									        <option value="0">Please select an option</option>
+									        <option value="1">Heavy chain only</option>
+									        <option value="2">Light chain only</option>
+									        <option value="3">Heavy and Light chain only</option>
+        								</select>
+                                    </div>
+                                </div>
+
+                      		</div>
+						</div>
+					</div>
+				 </div>
+                 <!-- END GENERAL FORM -->
+
+                 <!-- BEGIN BIG HEAVY PANEL --> 
+                <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1">
+					    <div id="heavy_chain_panel" class="panel panel-success panel-collapse">
+ 						    <div class="panel-heading">Heavy Chain</div>
+							<div id="heavy_chain_panel_body" class="panel-body collapse">
+
+                              <!-- BEGIN HEAVY FORM -->
+                                <div class="row">
+                                  <div class="col-lg-8 col-lg-offset-2">
+                                      <div class="panel panel-success">
+                                          <div class="panel-heading">Parameters</div>
+                                          <div class="panel-body" style="text-align:center">
+
+                                             <div class="form-group">
+                                                  <label class="col-sm-2 control-label">Analysis:</label>
+                                                  <div class="col-sm-10">
+                                                      <select class="analysis_heavy form-control">
+                                                          <option value="">Please select an option</option>
+                                                      </select>
+                                                  </div>
+                                              </div>
+
+                                              <div class="form-group">
+                                                  <label class="col-sm-2 control-label">Chain:</label>
+                                                  <div class="col-sm-10">
+                                                      <select class="chain-type form-control">
+                                                          <option value="">Please select an option</option>
+                                                          <option value="">Heavy</option>
+                                                      </select>
+                                                  </div>
+                                              </div>
+                                          </div>
+                                      </div>
+                                  </div>
+                               </div>
+                               <!-- END HEAVY FORM -->
+
+
+                              <!-- BEGIN DATATABLE HEAVY-->
+                               <div class="row">
+                                    <div class="col-lg-12">
+                                        <div class="">
+                                            <table id="table_heavy" class="table table-responsive table-striped table-bordered" cellspacing="0" width="100%">
+                                                <thead>
+                                                    <tr>
+                                                        <th>sequence_id</th>
+                                                        <th>sequence name</th>
+                                                        <th>Best V</th>
+                                                        <th>Best D</th>
+                                                        <th>Best J</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                    <tr>
+                                                        <td></td>
+                                                        <td></td>
+                                                    </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>	
+                                    </div>
+                                </div>
+                            <!-- END DATATABLE HEAVY -->
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <!-- END BIG HEAVY PANEL --> 
+
+
+                <!-- BEGIN BIG LIGHT PANEL --> 
+                <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1">
+					    <div id="light_chain_panel" class="panel panel-info panel-collapse ">
+ 						    <div class="panel-heading">Light Chain</div>
+							<div id="light_chain_panel_body" class="panel-body collapse">
+
+
+                            <!-- BEGIN LIGHT FORM -->
+                              <div class="row">
+                                <div class="col-lg-8 col-lg-offset-2">
+                                    <div class="panel panel-info">
+                                        <div class="panel-heading">Parameters</div>
+                                        <div class="panel-body" style="text-align:center">
+
+                                           <div class="form-group">
+                                                <label class="col-sm-2 control-label">Analysis:</label>
+                                                <div class="col-sm-10">
+                                                    <select class="analysis_light form-control">
+                                                        <option value="">Please select an option</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+
+
+                                            <div class="form-group">
+                                                <label class="col-sm-2 control-label">Chain:</label>
+                                                <div class="col-sm-10">
+                                                    <select class="chain-type form-control">
+                                                        <option value="">Please select an option</option>
+                                                        <option value="">Kappa</option>
+                                                        <option value="">Lambda</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                             </div>
+                             <!-- END LIGHT FORM -->
+							
+                            <!-- BEGIN DATATABLE LIGHT -->
+                             <div class="row">
+                                <div class="col-lg-12">
+                                  <div class="">
+                                  <table id="table_light" class="table table-responsive table-striped table-bordered" cellspacing="0" width="100%">
+                                      <thead>
+                                          <tr>
+                                              <th>sequence_id</th>
+                                              <th>sequence name</th>
+                                              <th>Best V</th>
+                                              <th>Best J</th>
+                                          </tr>
+                                      </thead>
+                                      <tbody>
+                                          <tr>
+                                              <td></td>
+                                              <td></td>
+                                          </tr>
+                                          <tr>
+                                              <td></td>
+                                              <td></td>
+                                          </tr>
+                                      </tbody>
+                                  </table>
+                                    </div>	
+                                </div>
+                            </div>
+                            <!-- END DATATABLE LIGHT -->
+                            </div>
+                        </div>	
+                    </div>
+                </div>
+                <!-- END BIG LIGHT PANEL --> 
+                <div class="row">
+                    <div class="col-lg-10 col-lg-offset-1">
+                      <button class="btn btn-default" type="submit">Submit</button>
+                    </div>
+                </div>
+                </form>
+			</div>

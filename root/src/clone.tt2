@@ -1,0 +1,47 @@
+            <div class="inner">
+                <div class="row">
+                    <div class="col-lg-12 border">
+                        <h1> Sequences </h1>
+                    </div>
+                  <hr />
+				</div>  
+				<div class="row">
+                 <!--BLOCK SECTION -->
+                	<div class="col-lg-12 border">
+                    	<div class="table-responsive">
+
+[%- USE DataPrinter -%]
+   [%# DataPrinter.dump_html(sequences) %]
+    <table style="font-size: 0.9em;" class="table table-condensed table-bordered table-responsive  table-striped ">
+		<thead>
+		<tr>
+            [%- FOREACH col_name IN ['sequence_id','assay' ,'sequence name', 'V', 'D',
+			'J','CDR3 nt','CDR3 aa', 'info'] -%]
+                <th>[%- col_name -%]</th>
+            [%- END -%]
+        </tr>
+		</thead>
+		<tbody>
+        [%- WHILE ( seq = sequences.next )  -%]
+            <tr>
+                <td >[%- seq.putative_annotation_id -%]</td>
+                <td >[%- seq.sequence_rel.file.assay.assay_name -%]</td>
+                <td >[%- seq.sequence_rel.sequence_name -%]</td>
+                <td >[%- seq.putative_annotation_best_v -%]</td>
+                <td >[%- seq.putative_annotation_best_d -%]</td>
+                <td >[%- seq.putative_annotation_best_j -%]</td>
+                <td style="font-family:monospace;"><small>[%-seq.putative_annotation_putative_cdr3 -%]</small></td>
+                <td style="font-family:monospace;"><small>[%-
+				seq.putative_annotation_putative_cdr3_aa -%]</small></td>
+                <td> info </td>
+            </tr>
+        [% END %]
+		</tbody>
+    </table>
+                   		</div>
+					</div>
+                </div>
+
+                  <!--END BLOCK SECTION -->
+                
+            </div>

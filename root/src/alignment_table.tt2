@@ -1,0 +1,45 @@
+   [%- USE DataPrinter -%]
+   [%# DataPrinter.dump_html(clones) %]
+   [%- i = 1 -%]
+   [%- j = 0 -%]
+    <table class="table table-condensed table-bordered table-responsive" ">
+		<thead>
+		<tr>
+            [%- FOREACH col_name IN ['clone', 'N sequences', 'V', 'D', 'J','CDR3 aa','mutation info'] -%]
+                <th>[%- col_name -%]</th>
+            [%- END -%]
+        </tr>
+		</thead>
+		<tbody>
+        [%- FOREACH clone IN clones  -%]
+            <tr>
+                [%- IF clone.size > 1 -%]
+                <td style="background-color:#[%- colors.$j -%]">
+               	<a href="[% c.uri_for('/clone') %]?clone_id=[% (i - 1) %]">
+                [%- 
+                    IF j < colors.size - 1 ;
+                        j = j + 1;
+                    ELSE;
+                        j = 0;
+                    END;
+                -%]
+                [%- ELSE -%]
+                <td>
+               	<a href="[% c.uri_for('/clone') %]?clone_id=[% (i - 1) %]">
+                [%- END -%]
+                [%- i -%]</a></td>
+                <td >[%- clone.size  -%]</td>
+                [%#- FOREACH seq IN clone  -%]
+                <td >[%- clone.0.putative_annotation_best_v -%]</td>
+                <td >[%- clone.0.putative_annotation_best_d -%]</td>
+                <td >[%- clone.0.putative_annotation_best_j -%]</td>
+                <td >[%- clone.0.putative_annotation_putative_cdr3_aa -%]</td>
+                <td ><a href="[% c.uri_for('/mutation') %]?clone_id=[% (i - 1) %]"> mutations </a></td>
+
+                [%# END %]
+            </tr>
+        [%- i = i + 1-%]
+        [% END %]
+		</tbody>
+    </table>
+<br>

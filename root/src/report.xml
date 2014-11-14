@@ -1,0 +1,390 @@
+<workbook>
+    [% FOREACH type IN all_clusters.keys.sort %]
+    [% i = 0 %]
+    <worksheet name="[% type %]">
+        <row>
+            [% FOREACH col_name IN col_header %]
+            <format bold="1" align="center">
+                <cell>[% col_name %]</cell>
+            </format>
+            [% END %]
+        </row>
+           [% clone = all_clusters.$type %]
+            [% color = 16 %] 
+            [% FOREACH key IN aux_order.$type %]
+                [% list = key.split('_') %]
+                [% vj_key = list.0 %]
+                [% cdr3_key = list.1 %]
+                [% i = i + 1 %]
+                [% j = 0 %]
+                [% IF aux.$type.$key == 1 %]
+                [% color = 0 %]
+                [% END %]
+    
+                [% FOREACH well IN clone.$vj_key.$cdr3_key %]
+                    <row>
+                        <format bg_color="[% color %]">
+                            <format align="center" bold="1">
+                                <cell ref="[% key %]">[% i %]</cell>
+                            </format>
+                            <format align="center" >
+                                <cell ref="size_[%- key -%]">[% clone.$vj_key.$cdr3_key.size  %]</cell>
+                            </format>
+
+                        [% FOREACH chain IN ['H', 'L']  %]
+                            [% FOREACH light IN ['lambda', 'kappa']%]
+                                [% IF chain == 'H' %]
+                                    [% feature =  well.${chain} %]
+                                [% ELSE %]
+                                    [% feature =  well.${chain}.${light} %]
+                                [% END%]
+
+								[% nt_mismatches=0 %]
+								[% aa_mismatches=0 %]
+                                [% IF feature %]
+                                    <cell>[% feature.query_id %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                [% END %]
+    
+                                [% rearrangement = feature.rearrangement_summary %]
+                                [% IF rearrangement %]
+
+                                    <cell>[% rearrangement.productive %]</cell>
+                                    <cell>[% rearrangement.stop_codon %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                    <cell>N/A</cell>
+                                [% END %]
+
+ 
+                                [% aln = feature.rendered_alignment %]
+                                [% IF aln %]
+                                    <!-- # VDJ -->
+                                    [% FOREACH row IN  ['best_V', 'best_D', 'best_J'] %]
+                                        [% pred = "has_$row" %]
+                                        [% IF aln.$pred %]
+                                            <cell>[% aln.${row}.id %]</cell>
+                                        [% ELSE %]
+                                            <cell>N/A</cell>
+                                        [% END %]
+                                    [% END %]
+
+                                    <!-- CDR3 -->
+                                    <cell>[% feature.infer_CDR3_nt %]</cell>
+                                    <cell>[% feature.infer_CDR3_nt_length %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa_length %]</cell>
+
+                                    <!-- FWR1,2,3 and CDR1,2 -->
+                                    [% sub_r = aln.query.sub_regions_sequence %]
+                                    [% sub_t = aln.query.sub_regions_translation %]
+                                    [% FOREACH r IN ['FWR1','CDR1','FWR2','CDR2','FWR3'] %]
+                                        [% pred = "has_$r" %]
+                                        [% IF sub_r.$pred %]
+                                            <!-- [ mismatches, deletions, insertions]-->
+                                            [% aa_mut = feature.infer_aa_diff(r) %]
+                                            <cell>[% sub_r.$r %]</cell>
+                                            <cell>[% feature.alignments.$r.gaps %]</cell>
+											<cell>[% feature.alignments.$r.mismatches %]</cell>
+											[% IF  feature.alignments.$r.mismatches != 'N/A'  %]
+											[% nt_mismatches = nt_mismatches + feature.alignments.$r.mismatches %]
+											[% END %]
+											<cell>[%  aa_mut.0 %]</cell>
+											[% IF aa_mut.0 != 'N/A'  %]
+												[% aa_mismatches = aa_mismatches + aa_mut.0 %]
+											[% END %]
+                                            <cell>[%  aa_mut.2 %]</cell>
+                                            <cell>[%  aa_mut.1 %]</cell>
+                                            <cell>[% sub_t.$r %]</cell>
+                                        [% ELSE %]
+                                            [% total =  7 %]
+                                            [% FOREACH n IN [1 .. total ] %]
+                                                <cell>N/A</cell>
+                                            [% END %]
+                                        [% END%]
+                                    [% END %]
+
+									<cell>[%- nt_mismatches -%]</cell>
+									<cell>[% aln.query.sequence %]</cell>
+									<cell>[%- aa_mismatches -%]</cell>
+                                    <cell>[% aln.query.translation %]</cell>
+									<cell>[% feature.mismatches.complete_germ.join(' ') %]</cell>
+
+                                [% ELSE %]
+                                    [% total =  (3 + 4 + (7 * 5) + 4) %]
+                                    [% FOREACH n IN [1 .. total ] %]
+                                        <cell>N/A</cell>
+                                    [% END %]
+                                [% END %]
+                                
+                                [% IF chain == 'H' %]
+                                    [% LAST %]
+                                [% END %]
+							[% END  %]
+                        [% END  %]
+
+                        </format>
+                    </row>
+                    [% j = j + 1 %]
+                [% END %]
+                <row></row>
+                [% IF j > 1 %]
+                    <format valign="vcenter" align="center" bg_color="[% color %]" bold="1">    
+                        <merge_range ref="[% key %]">[% i %]</merge_range>
+                        <format bold='0'>
+                            <merge_range ref="size_[%- key -%]">[% clone.$vj_key.$cdr3_key.size  %]</merge_range>
+                        </format>
+                    </format>
+                [% END %]
+                [% color = color + 1 %]
+                [% IF color > max_color_index %] 
+                    [% color = 16 %]
+                [% END %]
+            [% END %]
+    </worksheet>
+[% END %]
+
+    [% i = 0 %]
+    [% color = 0 %]
+    <worksheet name="trash">
+        <row>
+            [% FOREACH col_name IN col_header %]
+            <bold><cell>[% col_name %]</cell></bold>
+            [% END %]
+        </row>
+                [% FOREACH key IN trash.keys %]
+                    [% well = trash.$key %]
+                    <row>
+                            <format align="center" bold="1">
+                                <cell>[% i %]</cell>
+                            </format>
+                        [% FOREACH chain IN ['H', 'L']  %]
+                            [% FOREACH light IN ['lambda', 'kappa']%]
+                                [% IF chain == 'H' %]
+                                    [% feature =  well.${chain} %]
+                                [% ELSE %]
+                                    [% feature =  well.${chain}.${light} %]
+                                [% END%]
+
+                                [% IF feature %]
+                                    <cell>[% feature.query_id %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                [% END %]
+
+                                [% rearrangement = feature.rearrangement_summary %]
+                                [% IF rearrangement %]
+                                    <cell>[% rearrangement.productive %]</cell>
+                                    <cell>[% rearrangement.stop_codon %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                    <cell>N/A</cell>
+                                [% END %]
+ 
+                                [% aln = feature.rendered_alignment %]
+                                [% IF aln %]
+                                    <!-- # VDJ -->
+                                    [% FOREACH row IN  ['best_V', 'best_D', 'best_J'] %]
+                                        [% pred = "has_$row" %]
+                                        [% IF aln.$pred %]
+                                            <cell>[% aln.${row}.id %]</cell>
+                                        [% ELSE %]
+                                            <cell>N/A</cell>
+                                        [% END %]
+                                    [% END %]
+
+                                    <!-- CDR3 -->
+                                    <cell>[% feature.infer_CDR3_nt %]</cell>
+                                    <cell>[% feature.infer_CDR3_nt_length %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa_length %]</cell>
+
+                                    <!-- FWR1,2,3 and CDR1,2 -->
+                                    [% sub_r = aln.query.sub_regions_sequence %]
+                                    [% sub_t = aln.query.sub_regions_translation %]
+                                    [% FOREACH r IN ['FWR1','CDR1','FWR2','CDR2','FWR3'] %]
+                                        [% pred = "has_$r" %]
+                                        [% IF sub_r.$pred %]
+                                            <!-- [ mismatches, insertions, deletions]-->
+                                            [% aa_mut = feature.infer_aa_diff(r) %]
+                                            <cell>[% sub_r.$r %]</cell>
+                                            <cell>[% feature.alignments.$r.gaps %]</cell>
+                                            <cell>[% feature.alignments.$r.mismatches %]</cell>
+                                            <cell>[%  aa_mut.0 %]</cell>
+                                            <cell>[%  aa_mut.1 %]</cell>
+                                            <cell>[%  aa_mut.2 %]</cell>
+                                            <cell>[% sub_t.$r %]</cell>
+                                        [% ELSE %]
+                                            [% total =  7 %]
+                                            [% FOREACH n IN [1 .. total ] %]
+                                                <cell>N/A</cell>
+                                            [% END %]
+                                        [% END%]
+                                    [% END %]
+
+                                    <cell>[% aln.query.sequence %]</cell>
+                                    <cell>[% aln.query.translation %]</cell>
+
+                                [% ELSE %]
+                                    [% total =  (3 + 4 + (7 * 5) + 2) %]
+                                    [% FOREACH n IN [1 .. total ] %]
+                                        <cell>N/A</cell>
+                                    [% END %]
+                                [% END %]
+                                
+                                [% IF chain == 'H' %]
+                                    [% LAST %]
+                                [% END %]
+                            [% END  %]
+                        [% END  %]
+                    </row>
+                [% END %]
+    </worksheet>
+
+	[% FOREACH type IN filtered_all_clusters.keys.sort %]
+    [% i = 0 %]
+    <worksheet name="[% type %]_filtered">
+        <row>
+            [% FOREACH col_name IN col_header %]
+            <format bold="1" align="center">
+                <cell>[% col_name %]</cell>
+            </format>
+            [% END %]
+        </row>
+			[% clone = filtered_all_clusters.$type %]
+            [% color = 16 %] 
+            [% FOREACH key IN aux_order.$type %]
+                [% list = key.split('_') %]
+                [% vj_key = list.0 %]
+                [% cdr3_key = list.1 %]
+                [% i = i + 1 %]
+                [% j = 0 %]
+                [% IF aux.$type.$key == 1 %]
+                [% color = 0 %]
+                [% END %]
+    
+                [% FOREACH well IN clone.$vj_key.$cdr3_key %]
+                    <row>
+                        <format bg_color="[% color %]">
+                            <format align="center" bold="1">
+                                <cell ref="[% key %]">[% i %]</cell>
+                            </format>
+                            <format align="center" >
+                                <cell ref="size_[%- key -%]">[% clone.$vj_key.$cdr3_key.size  %]</cell>
+                            </format>
+
+                        [% FOREACH chain IN ['H', 'L']  %]
+                            [% FOREACH light IN ['lambda', 'kappa']%]
+                                [% IF chain == 'H' %]
+                                    [% feature =  well.${chain} %]
+                                [% ELSE %]
+                                    [% feature =  well.${chain}.${light} %]
+                                [% END%]
+
+								[% nt_mismatches=0 %]
+								[% aa_mismatches=0 %]
+                                [% IF feature %]
+                                    <cell>[% feature.query_id %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                [% END %]
+    
+                                [% rearrangement = feature.rearrangement_summary %]
+                                [% IF rearrangement %]
+
+                                    <cell>[% rearrangement.productive %]</cell>
+                                    <cell>[% rearrangement.stop_codon %]</cell>
+                                [% ELSE %]
+                                    <cell>N/A</cell>
+                                    <cell>N/A</cell>
+                                [% END %]
+
+ 
+                                [% aln = feature.rendered_alignment %]
+                                [% IF aln %]
+                                    <!-- # VDJ -->
+                                    [% FOREACH row IN  ['best_V', 'best_D', 'best_J'] %]
+                                        [% pred = "has_$row" %]
+                                        [% IF aln.$pred %]
+                                            <cell>[% aln.${row}.id %]</cell>
+                                        [% ELSE %]
+                                            <cell>N/A</cell>
+                                        [% END %]
+                                    [% END %]
+
+                                    <!-- CDR3 -->
+                                    <cell>[% feature.infer_CDR3_nt %]</cell>
+                                    <cell>[% feature.infer_CDR3_nt_length %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa %]</cell>
+                                    <cell>[% feature.infer_CDR3_aa_length %]</cell>
+
+                                    <!-- FWR1,2,3 and CDR1,2 -->
+                                    [% sub_r = aln.query.sub_regions_sequence %]
+                                    [% sub_t = aln.query.sub_regions_translation %]
+                                    [% FOREACH r IN ['FWR1','CDR1','FWR2','CDR2','FWR3'] %]
+                                        [% pred = "has_$r" %]
+                                        [% IF sub_r.$pred %]
+                                            <!-- [ mismatches, deletions, insertions]-->
+                                            [% aa_mut = feature.infer_aa_diff(r) %]
+                                            <cell>[% sub_r.$r %]</cell>
+                                            <cell>[% feature.alignments.$r.gaps %]</cell>
+											<cell>[% feature.alignments.$r.mismatches %]</cell>
+											[% IF  feature.alignments.$r.mismatches != 'N/A'  %]
+											[% nt_mismatches = nt_mismatches + feature.alignments.$r.mismatches %]
+											[% END %]
+											<cell>[%  aa_mut.0 %]</cell>
+											[% IF aa_mut.0 != 'N/A'  %]
+												[% aa_mismatches = aa_mismatches + aa_mut.0 %]
+											[% END %]
+                                            <cell>[%  aa_mut.2 %]</cell>
+                                            <cell>[%  aa_mut.1 %]</cell>
+                                            <cell>[% sub_t.$r %]</cell>
+                                        [% ELSE %]
+                                            [% total =  7 %]
+                                            [% FOREACH n IN [1 .. total ] %]
+                                                <cell>N/A</cell>
+                                            [% END %]
+                                        [% END%]
+                                    [% END %]
+
+									<cell>[%- nt_mismatches -%]</cell>
+									<cell>[% aln.query.sequence %]</cell>
+									<cell>[%- aa_mismatches -%]</cell>
+                                    <cell>[% aln.query.translation %]</cell>
+
+                                [% ELSE %]
+                                    [% total =  (3 + 4 + (7 * 5) + 4) %]
+                                    [% FOREACH n IN [1 .. total ] %]
+                                        <cell>N/A</cell>
+                                    [% END %]
+                                [% END %]
+                                
+                                [% IF chain == 'H' %]
+                                    [% LAST %]
+                                [% END %]
+                            [% END  %]
+                        [% END  %]
+
+                        </format>
+                    </row>
+                    [% j = j + 1 %]
+                [% END %]
+                <row></row>
+                [% IF j > 1 %]
+                    <format valign="vcenter" align="center" bg_color="[% color %]" bold="1">    
+                        <merge_range ref="[% key %]">[% i %]</merge_range>
+                        <format bold='0'>
+                            <merge_range ref="size_[%- key -%]">[% clone.$vj_key.$cdr3_key.size  %]</merge_range>
+                        </format>
+                    </format>
+                [% END %]
+                [% color = color + 1 %]
+                [% IF color > max_color_index %] 
+                    [% color = 16 %]
+                [% END %]
+            [% END %]
+    </worksheet>
+[% END %]
+
+</workbook>

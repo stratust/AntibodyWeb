@@ -1,0 +1,29 @@
+﻿            <style>
+	@-moz-document url-prefix() {
+    fieldset {
+        display: table-cell;
+    }
+	@media(max-width:5000px){
+  		.table-responsive{overflow-x:scroll;}
+	}
+}		
+			</style>
+            <div class="inner">
+                <div class="row">
+                    <div class="col-lg-12 border">
+                        <h1> Alignment </h1>
+                    </div>
+                  <hr />
+				</div>  
+				<div class="row">
+                 <!--BLOCK SECTION -->
+                	<div class="col-lg-12 border">
+                    	<div class="table-responsive">
+							[% PROCESS alignment_table.tt2 %]
+                   		</div>
+					</div>
+                </div>
+
+                  <!--END BLOCK SECTION -->
+                
+            </div>
