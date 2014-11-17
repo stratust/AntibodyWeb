@@ -67,6 +67,7 @@ sub clustering : Path(/clustering) :Arg(0) Does('NeedsLogin')  {
         push @clone_ids, join ',', @aux;
     }
     $c->session->{clones} = \@clone_ids;
+    
 
     
     $c->stash( template => 'alignment.tt2');
@@ -94,9 +95,9 @@ sub mutation :Path('/mutation') :Arg(0) Does('NeedsLogin')  {
     my $seq_ids =  $arrayref->[$c->req->param('clone_id')];
     my @ids = split ",", $seq_ids;
 
-    my $objects = $c->model('ClusteringAbsDB')->get_objects(\@ids);
-
-    $c->stash( template => 'mutation.tt2', objects => $objects );
+    my $rs = $c->model('ClusteringAbsDB')->get_objects(\@ids);
+    
+    $c->stash( template => 'mutation.tt2', rs => $rs  );
 
 }
 

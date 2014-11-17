@@ -182,13 +182,14 @@ package ClusteringAbsDB;
         
         my $scope = $kiokudb->new_scope;
         
-        my @seqs;
-        while ( my $s = $rs->next ) {
-            my $obj = $kiokudb->lookup( $s->object_id );
-            push @seqs, $obj;
-        }
+#        my @seqs;
+        #while ( my $s = $rs->next ) {
+            #my $obj = $kiokudb->lookup( $s->object_id );
+            #push @seqs, $obj;
+        #}
 
-        return(\@seqs);
+        #return(\@seqs);
+        return($rs);
     }
 
 

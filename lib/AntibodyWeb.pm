@@ -97,8 +97,8 @@ __PACKAGE__->config(
             'WithRedirect',           # Optional, enables redirect-back feature
             '-RenderAsTTTemplate',    # Optional, allows you to use your own template
         ],
-        },
-
+    },
+    
 );
 
 # Start the application
