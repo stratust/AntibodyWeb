@@ -114,11 +114,12 @@ sub sequence_list_heavy_GET {
                 putative_annotation_best_d => { like => "%" . uc( $c->req->param('search[value]') ) . "%" },
                 putative_annotation_best_j => { like => "%" . uc( $c->req->param('search[value]') ) . "%" },
             ],
-            chain_type_id => $heavy_chain->id
+            chain_type_id => $heavy_chain->id,
+            assay_id => $c->req->param('assay'),
         },
 
         {
-            join => 'sequence_rel',
+            join => {'sequence_rel' => 'file' },
             '+select' => [ qw/ sequence_rel.sequence_name / ],
             '+as' => [qw/sequence_name/],
         }
@@ -194,10 +195,11 @@ sub sequence_list_light_GET {
                 putative_annotation_best_v => { like => "%" . uc( $c->req->param('search[value]') ) . "%" },
                 putative_annotation_best_j => { like => "%" . uc( $c->req->param('search[value]') ) . "%" },
             ],
-            chain_type_id => $heavy_chain->id
+            chain_type_id => $heavy_chain->id,
+            assay_id => $c->req->param('assay'),
         },
         {
-            join => 'sequence_rel',
+            join => { 'sequence_rel' => 'file' },
             '+select' => [ qw/ sequence_rel.sequence_name / ],
             '+as' => [qw/sequence_name/],
         }

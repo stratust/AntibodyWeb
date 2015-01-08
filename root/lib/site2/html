@@ -51,9 +51,11 @@
           [% content %]
         </div>
         <!--END PAGE CONTENT -->
-[%IF c.user_exists %]        
+[%IF c.user_exists %]
         <!-- RIGHT STRIP  SECTION -->
+<!--
 [% PROCESS site2/right_strip %]
+-->
         <!-- END RIGHT STRIP  SECTION -->
 [% END %]
     </div>

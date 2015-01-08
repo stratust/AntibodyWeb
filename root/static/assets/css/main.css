@@ -106,7 +106,6 @@ body.padTop53 {
 }
 
 #wrap {
-  background-color: #f8f8f8;
 }
 
 #right {
@@ -636,7 +635,7 @@ font-weight: bolder;
 
 .outer {
   padding: 10px;
-  background-color: #6e6e6e;
+  //background-color: #6e6e6e;
 }
 
 .outer:before,

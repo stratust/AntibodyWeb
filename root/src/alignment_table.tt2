@@ -35,6 +35,7 @@
                 <td >[%- clone.0.putative_annotation_best_j -%]</td>
                 <td >[%- clone.0.putative_annotation_putative_cdr3_aa -%]</td>
                 <td ><a href="[% c.uri_for('/mutation') %]?clone_id=[% (i - 1) %]"> mutations </a></td>
+                <td ><a href="[% c.uri_for('/getxls') %]?clone_id=[% (i - 1)%]"> get mutations file </a></td>
 
                 [%# END %]
             </tr>

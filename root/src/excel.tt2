@@ -1,0 +1,208 @@
+<workbook>
+    <worksheet name="Nucleotides">
+		<row>
+			<format align="center" bold="1">
+				<cell>N</cell>
+				<cell>ID</cell>
+				<cell>assay</cell>
+				<cell>name</cell>
+				<cell>V</cell>
+				<cell>D</cell>
+				<cell>J</cell>
+				<cell>Total mismatches</cell>
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_nuc.$h ] -%]
+					<cell ref="[%- h -%]">[% h %]</cell>
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		[%- i = 1 -%]
+		[%- WHILE ( s = rs.next ) -%]
+		<row>
+			<cell>[% i %]</cell>
+			<cell>[% s.putative_annotation_id %]</cell>
+			<cell>[% s.sequence_rel.file.assay.assay_name %]</cell>
+			<cell>[% s.sequence_rel.sequence_name %]</cell>
+			<cell>[% s.putative_annotation_best_v %]</cell>
+			<cell>[% s.putative_annotation_best_d %]</cell>
+			<cell>[% s.putative_annotation_best_j %]</cell>
+			[% mis = 0 %]
+			[% FOREACH region IN regions %]
+				[% this = "putative_annotation_" _ region.lower _ "_mismatches" %]
+				[% mis = mis + s.$this %]
+			[% END %]
+
+			<cell>[% mis %]</cell>
+			<format align="center" font="Courier New" size="10">
+			[%- col = 1 -%]
+			[% FOREACH region IN regions %]				
+				[% nuc_seq = nuc.$region.shift %]					
+					[%-FOREACH nt IN nuc_seq -%]
+						<cell width="1.5" ref="[%- col -%]">[% nt %]</cell>
+						[%- col = col + 1 -%]
+					[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		[%- i = i + 1 -%]
+		[%- END -%]
+		<row>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<format size='8'>
+			[%- col = 1 -%]
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_nuc.$h ] -%]
+					<formula>=COUNTIF(<range ref="[%- col -%]" />,"&lt;&gt;.") - COUNTIF(<range ref="[%- col -%]" />,"N")</formula>
+					[% col = col + 1 %]
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		<row>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<format size='8'>
+			[%- col = 1 -%]
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_nuc.$h ] -%]
+					<formula>=COUNTA(<range ref="[%- col -%]" />) - COUNTIF(<range ref="[%- col -%]" />,"N")</formula>
+					[% col = col + 1 %]
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		<format align="center" bold="1">
+				<merge_range ref="count_m">Number of mismatches</merge_range>
+				<merge_range ref="total">Number of sequences</merge_range>
+		</format>
+		<format align="center" bold="1">
+			[%- FOREACH h IN regions -%]
+				<merge_range ref="[%- h -%]">[%- h -%]</merge_range>
+			[%- END -%]		
+		</format>
+    </worksheet>
+
+
+
+
+
+
+
+
+
+    <worksheet name="Amino acid">
+		<row>
+			<format align="center" bold="1">
+				<cell>N</cell>
+				<cell>ID</cell>
+				<cell>assay</cell>
+				<cell>name</cell>
+				<cell>V</cell>
+				<cell>D</cell>
+				<cell>J</cell>
+				<cell>Total mismatches</cell>
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_aa.$h ] -%]
+					<cell ref="[%- h -%]">[% h %]</cell>
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		[%- i = 1 -%]
+		[%- rs = rs.reset -%]
+		[%- WHILE ( s = rs.next ) -%]
+		<row>
+			<cell>[% i %]</cell>
+			<cell>[% s.putative_annotation_id %]</cell>
+			<cell>[% s.sequence_rel.file.assay.assay_name %]</cell>
+			<cell>[% s.sequence_rel.sequence_name %]</cell>
+			<cell>[% s.putative_annotation_best_v %]</cell>
+			<cell>[% s.putative_annotation_best_d %]</cell>
+			<cell>[% s.putative_annotation_best_j %]</cell>
+			[% mis = 0 %]
+			[% FOREACH region IN regions %]
+				[% this = "putative_annotation_" _ region.lower _ "_mismatches_aa" %]
+				[% mis = mis + s.$this %]
+			[% END %]
+
+			<cell>[% mis %]</cell>
+		
+			<format align="center" font="Courier New" size="10">
+			[%- col = 1 -%]
+			[% FOREACH region IN regions %]				
+				[% aa_seq = aa.$region.shift %]					
+					[%-FOREACH aminoacid IN aa_seq -%]
+						<cell width="1.5" ref="[%- col -%]">[% aminoacid %]</cell>
+						[%- col = col + 1 -%]
+					[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		[%- i = i + 1 -%]
+		[%- END -%]
+		<row>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+			<cell ref='count_m'></cell>
+
+			<format size='8'>
+			[%- col = 1 -%]
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_aa.$h ] -%]
+					<formula>=COUNTIF(<range ref="[%- col -%]" />,"&lt;&gt;.") - COUNTIF(<range ref="[%- col -%]" />,"X")</formula>
+					[% col = col + 1 %]
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		<row>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<cell ref='total'></cell>
+			<format size='8'>
+			[%- col = 1 -%]
+			[%- FOREACH h IN regions -%]
+				[%- FOREACH repeat IN [ 1 .. size_region_aa.$h ] -%]
+					<formula>=COUNTA(<range ref="[%- col -%]" />) - COUNTIF(<range ref="[%- col -%]" />,"X")</formula>
+					[% col = col + 1 %]
+				[%- END -%]
+			[%- END -%]
+			</format>
+		</row>
+		<format align="center" bold="1">
+				<merge_range ref="count_m">Number of mismatches</merge_range>
+				<merge_range ref="total">Number of sequences</merge_range>
+		</format>
+		<format align="center" bold="1">
+			[%- FOREACH h IN regions -%]
+				<merge_range ref="[%- h -%]">[%- h -%]</merge_range>
+			[%- END -%]		
+		</format>
+    </worksheet>
+
+ </workbook>
+  

@@ -1,0 +1,27 @@
+            <div class="inner">
+                <div class="row">
+                    <div class="col-lg-12 border">
+                        <h3>Sequence annotation information</h3>
+                    </div>
+				</div>  
+				<div class="row">
+                 <!--BLOCK SECTION -->
+                	<div class="col-lg-12 border">
+
+					[%  obj = c.model('KiokuDB').lookup(seq.object_id) %]
+					<pre>
+					[% obj.igblast_block %]
+					</pre>
+					</div>
+                </div>
+				<div class="row">
+                 <!--BLOCK SECTION -->
+                	<div class="col-lg-12 border">
+					[%# USE DataPrinter(dp = { class => { expand => 'all' } }) %]
+					[%# DataPrinter.dump_html(obj) %]
+					</div>
+                </div>
+
+                  <!--END BLOCK SECTION -->
+                
+            </div>

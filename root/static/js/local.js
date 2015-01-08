@@ -18,7 +18,14 @@
                   "sAjaxDataProp": "data",
                   "processing": true,
                   "serverSide": true,
-                  "ajax": "/api/get_heavy_sequence",
+                  "ajax": {
+						"url": "/api/get_heavy_sequence",
+					   "data": function( d ) {
+							   d.study = $( "select[name='study']").val();
+							   d.assay = $( "select[name='assay']").val();
+							   d.clustering = $( "select[name='clustering']").val();
+					   }
+				  },
                   "columns": [
                       { "data": "sequence_id" },
                       { "data": "sequence_name" },
@@ -42,7 +49,15 @@
                   "sAjaxDataProp": "data",
                   "processing": true,
                   "serverSide": true,
-                  "ajax": "/api/get_light_sequence",
+	              "ajax": {
+						"url": "/api/get_light_sequence",
+					   "data": function( d ) {
+							   d.study = $( "select[name='study']").val();
+							   d.assay = $( "select[name='assay']").val();
+							   d.clustering = $( "select[name='clustering']").val();
+					   }
+				  },
+					
                   "columns": [
                       { "data": "sequence_id" },
                       { "data": "sequence_name" },
@@ -127,6 +142,30 @@
  
                                  }
                    });
-	        });
 
+
+				 });
+
+$('a.popup-ajax').popover({
+		"html": true,
+		"content": function(){
+				var div_id =  "tmp-id-" + $.now();
+				return details_in_popup($(this).attr('data-link'), div_id);
+		}
+
+});
+
+
+function details_in_popup(link, div_id){
+		$.ajax({
+				url: link,
+				success: function(response){
+						$('#'+div_id).html(response);
+
+				}
+
+		});
+		return '<div id="'+ div_id +'">Loading...</div>';
+
+}
 

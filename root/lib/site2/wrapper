@@ -4,6 +4,8 @@
    ELSIF c.uri_for.match('autocrud');
      debug("Autocrud");
 	 PROCESS autocrud/extjs2/wrapper.tt;
+   ELSIF template.name.match('annotation_info.tt2');
+		content;
    ELSE;
      debug("Applying HTML page layout wrappers to $template.name\n");
      content WRAPPER site2/html + site2/layout;

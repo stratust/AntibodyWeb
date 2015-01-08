@@ -69,6 +69,18 @@ __PACKAGE__->config(
         render_die  => 1,
         TEMPLATE_EXTENSION => '.tt2',
     },
+    'View::Excel::Template::Plus' => {
+        etp_config => {
+            INCLUDE_PATH => __PACKAGE__->path_to( 'root', 'src' ),
+        },
+        etp_engine => 'TT',
+        etp_params => {
+            RENDERER => 'Excel::Template->RENDER_XML',
+            RENDER_XML => 1,
+            USE_UNICODE => 1,
+            ENCODING    => 'utf-8',
+        }
+    },
     'Plugin::Static::Simple' =>
       { include_path => [ __PACKAGE__->path_to( 'root', 'static' ), ], },
  

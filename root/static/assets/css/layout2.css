@@ -37,20 +37,14 @@
   }
 }
 @media (min-width: 992px) {
-  #left,
-  #right {
+  #left
+   {
     width: calc(220px);
   }
-  .mini-sidebar #right {
-    display: none;
-  }
-  #content {
-    width: calc(100% - 440px);
-  }
-  .side-right #content {
+ #content {
     width: calc(100% - 220px);
   }
-  .mini-sidebar #content {
+ .mini-sidebar #content {
     width: calc(100% - 100px);
   }
 }

@@ -1,25 +1,32 @@
-            <div class="inner">
+<style type="text/css">
+.popover{
+		        max-width:1200px;
+				    
+}
+
+</style>
+			<div class="inner">
                 <div class="row">
                     <div class="col-lg-12 border">
-                        <h1> Sequences </h1>
+                        <h3>Clone [% c.req.param('clone_id') + 1 %]:
+						Mutations</h3>
                     </div>
-                  <hr />
 				</div>  
 				<div class="row">
                  <!--BLOCK SECTION -->
                 	<div class="col-lg-12 border">
                     	<div class="table-responsive">
 
-[%-# USE DataPrinter -%]
-   [%# DataPrinter.dump_html(objects) %]
+   [% seq_info = [ 'sequence_id', 'sequence_name', 'assay', 'V', 'D', 'J' ] %]
    [% regions = [ 'FWR1', 'CDR1', 'FWR2', 'CDR2', 'FWR3' ] %]
-   [% FOREACH region IN regions %]
-    <table style="font-size: 0.9em; width: auto;" class="table table-condensed table-bordered table-responsive  table-striped ">
+   [% header = seq_info.merge(regions) %]
+   <table style="font-size: 0.9em; width: auto;" class="table table-condensed table-bordered  table-striped ">
 		<thead>
-		<tr>
-            [%- FOREACH col_name IN ['sequence_id', 'sequence_name', region ] -%]
-                <th>[%- col_name -%]</th>
+		<tr >
+            [%- FOREACH col_name IN header  -%]
+                <th style="text-align:center">[%- col_name -%]</th>
             [%- END -%]
+                <th style="text-align:center" >CDR3</th>
         </tr>
 		</thead>
 		<tbody>
@@ -27,34 +34,99 @@
         [%- WHILE (seq = rs.next) -%]
 			[%  obj = c.model('KiokuDB').lookup(seq.object_id) %]
             <tr>
-                <td >[%- seq.putative_annotation_id -%]</td>
-                <td >[%- seq.sequence_rel.sequence_name  %]</td>
-                <td style="font-family:monospace;">[%-
-				obj.mismatches.germ_regions.$region.join('') -%]</td>
-            </tr>
+                <td rowspan="2" >[%- seq.putative_annotation_id -%]</td>
+                <td rowspan="2" style=" white-space: nowrap;">
+				<a class="popup-ajax" tabindex="0" href="#" data-link="[%-c.uri_for('/annotinfo/' _ seq.putative_annotation_id) -%]"
+				data-trigger="focus"  data-placement="right" > [%-
+				seq.sequence_rel.sequence_name  %]</a></td>
+                <td rowspan="2" style=" white-space: nowrap;">[%- seq.sequence_rel.file.assay.assay_name  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_v  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_d  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_j  %]</td>
+			
+			[% FOREACH region IN regions %]
+ 
+                <td	style="font-family:monospace;text-align:right;white-space:nowrap;">&nbsp;[%- obj.mismatches.germ_regions_aa.$region.join("&nbsp;&nbsp;") -%]&nbsp;</td>
+			[% END %]
+                <td
+				style="font-family:monospace;" >&nbsp;[%-
+				seq.putative_annotation_putative_cdr3_aa.split('').join("&nbsp;&nbsp;")
+				-%]&nbsp;</td>
+ 
+           </tr>
+           <tr>
+
+			[% FOREACH region IN regions %]
+                <td
+				style="font-family:monospace;text-align:right;">
+				[%-
+				obj.mismatches.germ_regions.$region.join('')
+				-%]</td>
+            [% END %]
+                <td style="font-family:monospace;" >[%- seq.putative_annotation_putative_cdr3 -%]</td>
+
+			</tr>
         [% END %]
 		</tbody>
     </table>
-    [% END %]
-	    <table style="font-size: 0.9em; width: auto;" class="table table-condensed table-bordered table-responsive  table-striped ">
-		<thead>
-		<tr>
 
-            [%- FOREACH col_name IN ['sequence_id', 'CDR3' ] -%]
-                <th>[%- col_name -%]</th>
+					</div>
+					</div>
+                </div>
+                        <h3>Clone [% c.req.param('clone_id') + 1 %]:
+						Sequences</h3>
+				<div class="row">
+                 <!--BLOCK SECTION -->
+                	<div class="col-lg-12 border">
+                    	<div class="table-responsive">
+
+    <table style="font-size: 0.9em; width: auto;" class="table table-condensed table-bordered table-responsive  table-striped ">
+		<thead>
+		<tr >
+            [%- FOREACH col_name IN header  -%]
+                <th style="text-align:center">[%- col_name -%]</th>
             [%- END -%]
+                <th style="text-align:center" >CDR3</th>
         </tr>
 		</thead>
 		<tbody>
-        [%- FOREACH seq IN objects -%]
+		[% rs = rs.reset %]
+        [%- WHILE (seq = rs.next) -%]
+			[%  obj = c.model('KiokuDB').lookup(seq.object_id) %]
             <tr>
-                <td >[%- seq.best_V -%]</td>
-                <td style="font-family:monospace;">[%-	seq.infer_CDR3_nt -%]</td>
-            </tr>
+                <td rowspan="2" >[%- seq.putative_annotation_id -%]</td>
+                <td rowspan="2" style=" white-space: nowrap;">[%- seq.sequence_rel.sequence_name  %]</td>
+                <td rowspan="2" style=" white-space: nowrap;">[%- seq.sequence_rel.file.assay.assay_name  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_v  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_d  %]</td>
+                <td rowspan="2"  style=" white-space: nowrap;">[%-	seq.putative_annotation_best_j  %]</td>
+			
+			[% FOREACH region IN regions %]
+ 
+                <td style="font-family:monospace;text-align:right">&nbsp;[%- 
+				obj.mismatches.query_regions_aa.$region.join("&nbsp;&nbsp;")
+				-%]&nbsp;</td>
+			[% END %]
+                <td style="font-family:monospace;" >&nbsp;[%-
+				seq.putative_annotation_putative_cdr3_aa.split('').join("&nbsp;&nbsp;")
+				-%]&nbsp;</td>
+ 
+           </tr>
+           <tr>
+
+			[% FOREACH region IN regions %]
+                <td style="font-family:monospace;">[%-
+				obj.mismatches.query_regions.$region.join('') -%]</td>
+            [% END %]
+                <td style="font-family:monospace;" >[%-
+				seq.putative_annotation_putative_cdr3 -%]&nbsp;</td>
+
+			</tr>
         [% END %]
 		</tbody>
     </table>
- 					</div>
+
+					</div>
 					</div>
                 </div>
 
